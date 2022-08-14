@@ -26,7 +26,7 @@ function AddCard({ id }) {
             console.log('Card created!');
             setShow(false);
 
-            window.location.reload();
+            // window.location.reload();
         } else {
             console.log('Card not created!');
         }
