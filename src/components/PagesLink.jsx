@@ -1,6 +1,4 @@
 import { Route, Routes } from 'react-router-dom';
-
-import '../assets/CSS/global.css';
 import Auth from './Auth';
 import BoardList from './BoardList';
 import CreateBoard from './CreateBoard';

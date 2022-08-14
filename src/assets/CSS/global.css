@@ -234,7 +234,7 @@ input {
   display: flex;
   flex-direction: column;
   align-content: start;
-  padding: 0 0.6rem 0.5rem;
+  padding: 0 5px;
   overflow-y: auto;
 }
 
