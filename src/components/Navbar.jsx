@@ -6,7 +6,9 @@ export default function Navbar() {
             <nav className="navbarContainer">
                 <ul>
                     <li>
-                        <NavLink to="/">Home</NavLink>
+                        <NavLink className="active" to="/">
+                            Home
+                        </NavLink>
                     </li>
 
                     <li>
