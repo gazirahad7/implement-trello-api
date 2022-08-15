@@ -41,8 +41,18 @@ export default function Modal({ open, children, onClose }) {
     if (!open) {
         return null;
     }
+
+    if (open) {
+        window.addEventListener('click', (event) => {
+            console.log(event.target.classList.contains('modal'));
+            if (event.target.classList.contains('modal')) {
+                onClose();
+            }
+        });
+    }
+
     return (
-        <div style={OVERLAY_STYLES}>
+        <div style={OVERLAY_STYLES} className="modal">
             <div style={MODAL_STYLES}>
                 <div>
                     <button style={MODEL_CLOSE_BUTTON_STYLES} type="button" onClick={onClose}>
