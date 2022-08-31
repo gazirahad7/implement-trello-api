@@ -1,9 +1,7 @@
 /* eslint-disable no-restricted-globals */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from 'react';
-
 import { Link } from 'react-router-dom';
-
 import CreateBoard from './CreateBoard';
 import Modal from './Modal';
 
@@ -19,13 +17,23 @@ export default function Home() {
     const [show, setShow] = useState(false);
     const [isError, setIsError] = useState({ boardNameIsEmpty: false });
 
-    const getData = async () => {
+    // // create new board
+    const handleNewBoard = async (newBoard) => {
         const response = await fetch(
-            `https://api.trello.com/1/organizations/${defaultOrgID}/boards?key=${apiKey}&token=${apiSecret}`
+            `https://api.trello.com/1/boards/?name=${newBoard.name}&desc=${newBoard.desc}&key=${apiKey}&token=${apiSecret}`,
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            }
         );
-        const data = await response.json();
-        //  console.log(data);
-        setBoards(data);
+        if (response.status === 200) {
+            console.log('Board created!');
+            const data = await response.json();
+            setBoards([...boards, data]);
+            setShow(false);
+        }
     };
 
     // update boards when new board is created
@@ -57,6 +65,9 @@ export default function Home() {
 
         if (updatedUrl.status === 200) {
             console.log('Board updated!');
+
+            const data = await updatedUrl.json();
+            setBoards(boards.map((el) => (el.id === data.id ? { ...data } : el)));
             setShow(false);
         }
     };
@@ -75,16 +86,28 @@ export default function Home() {
             );
 
             if (deletedUrl.status === 200) {
+                const curBoard = boards.filter((board) => board.id !== boardDelId);
+                setBoards(curBoard);
+                //  setShow(false);
                 console.log('Board deleted!');
-                setShow(false);
             }
         }
     };
 
     useEffect(() => {
+        console.log('useEffect in created card');
+        const getData = async () => {
+            const response = await fetch(
+                `https://api.trello.com/1/organizations/${defaultOrgID}/boards?key=${apiKey}&token=${apiSecret}`
+            );
+            const data = await response.json();
+            //  console.log(data);
+            setBoards(data);
+        };
         getData();
-    }, [boards]);
+    }, []);
 
+    console.log('render home ');
     return (
         <div className="container">
             <h3 className="titleBoard">Board List</h3>
@@ -119,7 +142,7 @@ export default function Home() {
             )}
 
             <div className="boards">
-                <CreateBoard />
+                <CreateBoard onBoard={handleNewBoard} />
 
                 {boards.map((board) => (
                     <Link

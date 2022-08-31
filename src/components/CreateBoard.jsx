@@ -1,42 +1,33 @@
+/* eslint-disable global-require */
+/* eslint-disable import/extensions */
+/* eslint-disable import/no-unresolved */
 import { useState } from 'react';
 import Modal from './Modal';
 
-export default function CreateBoard() {
+export default function CreateBoard({ onBoard }) {
     const [show, setShow] = useState(false);
     const [boardName, setBoardName] = useState('');
     const [boardDesc, setBoardDesc] = useState('');
-    const { apiKey, apiSecret } = JSON.parse(sessionStorage.getItem('authInfo'));
     const [isError, setIsError] = useState({ boardNameIsEmpty: false });
 
-    // console.log(apiKey, apiSecret);
+    const handleSubmit = (event) => {
+        event.preventDefault();
+        console.log('from create board', boardName);
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        // setShow(false);
+        const getNewBoardData = {
+            name: boardName,
+            desc: boardDesc,
+        };
 
-        if (boardName === '') {
+        if (getNewBoardData.name === '') {
             setIsError({ boardNameIsEmpty: true });
-            return;
-        }
-        const apiPostUrl = await fetch(
-            `https://api.trello.com/1/boards/?name=${boardName}&desc=${boardDesc}&key=${apiKey}&token=${apiSecret}`,
-            {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            }
-        );
-        console.log(apiPostUrl);
-
-        if (apiPostUrl.status === 200) {
-            console.log('Board created!');
-            setShow(false);
         } else {
-            console.log('Board not created!');
+            onBoard(getNewBoardData);
+            setShow(false);
+            setBoardName('');
+            setBoardDesc('');
         }
     };
-
     return (
         <div>
             <div>
@@ -62,7 +53,7 @@ export default function CreateBoard() {
                             strokeWidth="1.5"
                             d="M18.57 22H14c-2.29 0-3.43-1.14-3.43-3.43v-7.14C10.57 9.14 11.71 8 14 8h4.57C20.86 8 22 9.14 22 11.43v7.14c0 2.29-1.14 3.43-3.43 3.43zM14.87 15h3.26M16.5 16.63v-3.26"
                         />
-                    </svg>{' '}
+                    </svg>
                     Create Board
                 </button>
                 <Modal open={show} onClose={() => setShow(false)}>
@@ -73,19 +64,22 @@ export default function CreateBoard() {
                             <input
                                 name="boardName"
                                 type="text"
+                                value={boardName}
                                 onChange={(e) => setBoardName(e.target.value)}
                             />
                             <p>Board Description:</p>
                             <input
                                 name="boardDesc"
                                 type="text"
+                                value={boardDesc}
                                 onChange={(e) => setBoardDesc(e.target.value)}
                             />
                             <p className="errorMsg">
                                 {isError.boardNameIsEmpty && 'Board name is required !'}
                             </p>
-                            <button className="btn" onClick={handleSubmit} type="submit">
-                                Create
+
+                            <button type="submit" className="btn" onClick={handleSubmit}>
+                                Create{' '}
                             </button>
                         </form>
                     </div>
