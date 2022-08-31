@@ -21,8 +21,7 @@ function BoardList() {
 
     useEffect(() => {
         getBoardList();
-    }, [lists]);
-
+    }, []);
     return (
         <div className="boardList">
             <h4 className="boardName">{BoardName}</h4>
